@@ -4,7 +4,7 @@ from typing import List, Dict, Any
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
-class SnapQuizEngine:
+class IaintreadingallatEngine:
     def __init__(self, user_id: str):
         self.user_id = user_id
         self.memory_file = f"memory_{user_id}.json"
