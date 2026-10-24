@@ -1,6 +1,6 @@
-Snap & Quiz - Cubbie Skill
+I ain't reading allat - Cubbie Skill
 
-Snap & Quiz turns photos of class notes, slides, and whiteboards into structured summaries, daily practice quizzes, and PDF study sheets directly inside iMessage.
+I ain't reading allat turns photos of class notes, slides, and whiteboards into structured summaries, daily practice quizzes, and PDF study sheets directly inside iMessage.
 
 Overview
 
