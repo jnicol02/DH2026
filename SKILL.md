@@ -1,102 +1,82 @@
 ---
 name: snap-quiz
-description: Turns photos of class notes, whiteboards or slides into clean notes and a daily 3-question pop quiz that brings back what the student got wrong. Use whenever a student sends a photo of notes, lecture slides or a whiteboard, even with no text, says "quiz me on this", has an exam coming and a pile of note photos, or wants daily practice questions. Unlike a study plan, this builds questions from the student's own notes and repeats missed ones.
+description: Turn photos of lecture notes, whiteboards, slides, or pasted class notes into concise study guides and interactive 3-question active-recall quizzes. Use whenever a student sends a photo of notes, even without a text message, sends multiple note photos, asks "quiz me on this", wants to review missed concepts, or requests recurring study practice.
 ---
 
 # Snap & Quiz
 
-Snap notes, check the concepts, quiz, come back to the weak spots. This Skill uses only Cubbie's built-in
-capabilities. It has no scripts and needs no sign-in.
+Help college students study *their own material* through a simple iMessage-friendly sequence: **snap notes → verify concepts → quiz → revisit weak spots**. This is an instructions-first Skill. It does not depend on `main.py`, a private server, an external API, or a sign-in.
 
-## When to use
+## Activation and scope
 
-- "Here are my bio notes, quiz me" (with one or more photos)
-- "Midterm Thursday, can you turn these whiteboard pics into practice questions?"
-- "Quiz me every morning on my CHEM notes"
-- "Make me a study sheet from these"
-- A photo of lecture slides, notes or a whiteboard sent with no text at all
-- Notes pasted as text, or a PDF of notes
+When a student sends a photo of notes without any text, proactively identify the topic, create a short study guide, and offer a 3-question quiz. Do not require the student to explicitly ask for a quiz.
 
-When several photos arrive one after another, treat them as one set of notes and reply once.
+When multiple photos arrive together or can be recognized as one batch, treat them as one set of notes. Combine the readable concepts and avoid generating separate study guides for each photo.
 
-Do not use it to answer graded homework, take-home exams or quizzes the student is currently taking. If the photos look
-like a graded assignment, offer to explain the concepts and quiz them on similar practice questions instead.
+Use this Skill for pictures of handwritten notes, lecture slides, whiteboards, text/PDF notes, study-guide requests, and short practice quizzes. Never imply you have read an image or attachment that is not actually available to you. If the user wants help with active graded work, offer concept explanations and similar practice rather than completing it for them.
 
-## 1. Read the notes
+## 1. Read and verify study material
 
-1. Read every photo, PDF, document or pasted text the student sent with Cubbie's ability to read files and images.
-   If a photo is too blurry to read, say which one ("Photo 2 is too blurry") and ask for a clearer shot; keep going
-   with the rest. Never guess what an unreadable photo says.
-2. Name the course or topic from the content and keep going without waiting ("📸 Looks like OOAD + Bloom's
-   Taxonomy."). If the student corrects it, use their name for it from then on.
-3. Pull out 5 to 15 key concepts: a term, a definition, a formula, a process step or a date. If the notes have fewer,
-   use what is there; do not pad. Use only what is in the notes; do not add facts that are not there. If something on
-   the page seems wrong, flag it rather than fix it. If the student asks for extra background, say which parts are
-   not from their notes.
+1. Read each accessible attachment or pasted note. For multiple images, distinguish them as Photo 1, Photo 2, etc.
+2. If image reading is unavailable, an image is missing, or text is unreadable, say what could not be read. Ask for a clearer photo or pasted text; never guess its contents.
+3. Extract 5–15 important concepts when possible. For each concept, keep a concise prompt and expected answer, plus a source identifier if available. If fewer concepts are supplied, work with what exists rather than padding.
+4. Stay grounded in the student's source material when the request is to quiz **their notes**. Mark uncertain or possibly incorrect statements for confirmation. Do not quietly invent or correct what the notes claim. If the student requests additional general knowledge, distinguish it from their notes.
+5. Infer a course name if obvious, but ask for confirmation only when necessary to organize material or reminders.
 
-## 2. Send the clean notes
+## 2. Show a concise study guide
 
-Text a short summary: the topic, then up to 5 key concepts as a dash list, and invite the student to correct anything
-read wrong. If there are more than 5 concepts, make a one-page PDF study sheet (concepts, definitions, 3 sample
-questions), send it, and say it's there. The student never has to open the PDF to start a quiz.
+- Summarize the topic and up to 5 important concepts in a compact message. Invite the student to correct any misunderstood extraction.
+- If there are many concepts, offer a fuller text-based study sheet.
+- Create or attach a PDF **only when PDF creation and delivery tools are actually available**. Otherwise provide a clean, copyable text study sheet; never say a PDF was created or sent when it was not.
+- Do not require the student to download a document before quizzing.
 
-## 3. Remember the concepts
+## 3. Maintain concept progress
 
-Save to Cubbie's memory, under "Snap & Quiz" and the course name: each concept with a one-line answer and its status,
-starting as "new". Keep what the student already saved for this course; add new concepts, do not overwrite them. Save
-only what is needed to study.
+Track each concept within the current conversation using these states:
 
-Statuses:
-- new: not answered right yet, or answered right once after a miss
-- missed: the latest answer was wrong, skipped or "I don't know"
-- got it: answered right while "new"
+- `new`: not yet answered correctly
+- `missed`: answered incorrectly on its latest attempt
+- `got it`: correctly answered after being new, or correctly answered again after recovery from a miss
 
-## 4. Offer the daily quiz
+Maintain, when possible, the course/topic, concept, expected answer, source, state, latest result, and last quiz occurrence. Apply these updates:
 
-After the first quiz (or right away if the student asks), ask once: "Want a pop quiz every morning? 8 am?" Let the
-student pick the time, how often, and when to stop (default: until the exam date if they mentioned one, otherwise
-7 days). Create the scheduled check-in only after they say yes, and confirm it only once it is set.
+- Wrong answer → `missed`.
+- Correct while `new` → `got it`.
+- Correct while `missed` → `new` (needs confirmation on another question).
+- Correct again while `new` after recovery → `got it`.
 
-Word the check-in so it makes sense days later on its own:
-"Snap & Quiz pop quiz for <course>: pick 3 concepts from the student's Snap & Quiz memory for <course> (missed ones
-first, then new, then ones not asked lately), ask them one at a time, and update each concept's status."
+Use persistent Cubbie memory **only if a real memory capability is present and confirms the save**. If not, retain state in the active chat and offer a compact progress recap for the student to copy into a later conversation. Do not promise cross-chat memory or claim an update was saved without confirmation. Never store sensitive personal information that is not needed to study.
 
-## 5. Run a quiz
+## 4. Run a 3-question active-recall quiz
 
-1. Start right away when asked. Default to 3 questions unless the student picks another number.
-2. Pick concepts: first "missed", then "new", then "got it" ones not asked in the last 3 days. Word each question a
-   little differently from last time, so it tests understanding rather than memory of the wording.
-3. Ask one question per message, short answer or multiple choice (A/B/C). Wait for the reply before the next one.
-   Never show the answer before the student tries.
-4. "hint": give a clue that doesn't give the answer away; it doesn't count as an attempt.
-   "skip" or "I don't know": give the answer in one line and count it as missed.
-5. Grade the idea, not the spelling or exact wording. If a reply is ambiguous, ask one short follow-up instead of
-   marking it wrong.
-6. After each reply, say right or not in one line, with a short explanation from the notes if they missed it, and
-   update the concept's status in memory.
-7. End with one line: the score and how many concepts are still "missed" ("2/3 🎯 2 left to nail"), and offer
-   another round on the missed ones. If the student stops early, score only what they answered.
+1. When asked to quiz, begin promptly. Default to **three questions**, one per message, unless the student chooses another number.
+2. Select concepts by priority: `missed` first, then `new`, then `got it` that have not been tested recently. Do not ask the exact same question twice in one session if a meaningful variation is possible.
+3. Prefer short-answer recall. Use 3-choice multiple-choice (A/B/C) when requested or helpful. Ask just one question; wait for the student's response before proceeding.
+4. Do not show the answer before an attempt. On "hint", give a helpful clue without giving away the answer; do not count the hint as an attempt. On "skip" or "I don't know", show a concise explanation and count the question as missed.
+5. Grade for meaning, not exact spelling. Accept equivalent correct answers; if a reply is ambiguous, ask one short clarification rather than marking it wrong immediately.
+6. After each attempted question, state whether the answer was correct, give a short explanation grounded in the notes, and update concept progress. Do not treat an assistant explanation as a student success.
+7. A standard three-question quiz contains **three graded attempts**; any additional retesting is a separate optional round. For each quiz track correct first attempts / graded attempts, excluding hints and clarifications.
+8. After question three, report `score/3`, list concepts to revisit, and offer another round targeting missed material. Vary the question wording to assess understanding instead of memorization.
+9. If a student stops early, report the actual attempted count; do not pretend all three questions were asked.
 
-If the student doesn't reply, don't chase them; the next scheduled quiz picks up where they left off.
+## 5. Optional recurring quizzes
 
-## Other requests
+When the student requests daily or recurring pop quizzes:
 
-- "PDF" or "study sheet": make the one-page PDF from the saved concepts for that course, missed ones first, and send it.
-- "Stop the quiz": cancel the scheduled check-in for that course and confirm in one line.
-- "How am I doing?": counts of got it / new / missed for each course.
-- "Quiz me" with no notes saved: ask for a photo or pasted notes, or quiz from general knowledge if the student says
-  that's what they want.
+1. Ask whether they want reminders, their preferred time and timezone if unknown, and a stop date (exam date if supplied, otherwise suggest 7 days). Obtain explicit agreement before scheduling anything.
+2. Check whether the current environment genuinely supports scheduled messages or reminders. Create one only through an available scheduling capability, and only report success after confirmation.
+3. Recurring message content should identify the course and invite the student to start a new three-question quiz. Do **not** assume a scheduled job can access the prior chat's unsaved concept list or conduct a multi-turn quiz on its own.
+4. If scheduling is unavailable, state that clearly and offer the next quiz prompt in copyable text. Never imply background reminders are active.
+5. If asked to cancel, cancel only if an actual scheduled reminder exists and a cancellation capability is available. Otherwise explain what the student can stop or change.
 
-The student's latest request (number of questions, topic, pace, stopping) overrides these defaults.
+## 6. Other requests and recovery
 
-## Replies
+- **"Study sheet" / "PDF"**: build from the accessible concepts; mark uncertainty; obey the actual export capabilities.
+- **"How am I doing?"**: count current-chat `new`, `missed`, and `got it` concepts, and report the known attempts and results. Identify the scope if older sessions are unavailable.
+- **No study material**: request a photo or pasted notes, or offer to quiz from general knowledge if the student explicitly prefers that.
+- **Unclear image**: name the unreadable item and continue with readable items.
+- **Memory/scheduling failure**: transparently state what did not work and provide a chat-only fallback.
 
-Keep each reply to a few short lines, plain text, no Markdown. One question per message. A few emoji as anchors are
-fine (📸 notes, 🎯 score, ⏰ schedule, 📄 PDF). Supportive and matter-of-fact. Ask one thing at a time and suggest a
-default the student can accept with "yes".
+## Response style
 
-## When something fails
-
-- No readable text in any photo: "I couldn't read these 📸 try a closer, brighter shot?"
-- Memory, scheduling or the PDF fails: say so in one line, keep quizzing in the chat, and offer to try again. Never
-  say something was saved, scheduled or sent unless it was.
+Write naturally for iMessage: concise plain text, no tables, and at most one quiz question per turn. Use supportive, matter-of-fact feedback; keep explanations short unless asked for depth. The student's latest requests (for question count, topic, hints, pace, or stopping) override defaults.
