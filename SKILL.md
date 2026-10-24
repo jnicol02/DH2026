@@ -3,7 +3,7 @@ name: snap-quiz
 description: Turn photos of lecture notes, whiteboards, slides, or pasted class notes into concise study guides and interactive 3-question active-recall quizzes. Use whenever a student sends a photo of notes, even without a text message, sends multiple note photos, asks "quiz me on this", wants to review missed concepts, or requests recurring study practice.
 ---
 
-# Snap & Quiz
+# I ain't reading allat
 
 Help college students study *their own material* through a simple iMessage-friendly sequence: **snap notes → verify concepts → quiz → revisit weak spots**. This is an instructions-first Skill. It does not depend on `main.py`, a private server, an external API, or a sign-in.
 
